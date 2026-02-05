@@ -25,6 +25,13 @@ import threading
 import time
 from datetime import datetime
 
+# 导入会话控制相关模块
+import astrbot.api.message_components as Comp
+from astrbot.core.utils.session_waiter import (
+    session_waiter,
+    SessionController,
+    SessionFilter,
+)
 # 导入数据存储模块
 from .data_storage import DataStorage
 
@@ -671,6 +678,12 @@ class PluginDzmm(Star):
         content = content.strip()
         user_key = self.get_user_key(event)
 
+        # 检查是否需要进入连续对话模式
+        if content.lower() == "chat":
+            # 进入连续对话模式
+            await self._start_continuous_chat(event)
+            return        
+
         # 调试信息：记录收到的命令
         logger.info(f"DZMM插件: 收到命令 '{content}'")
 
@@ -690,7 +703,12 @@ class PluginDzmm(Star):
                 "DZMM AI聊天插件帮助：\n"
                 "\n基础命令：\n"
                 "• /dzmm [内容] - 与AI聊天，支持上下文对话\n"
+                "• /dzmm chat - 进入连续对话模式，无需重复输入命令\n"
                 "• /dzmm help - 显示此帮助信息\n"
+                "\n连续对话模式说明：\n"
+                "• 输入 '退出' 或 'quit' 或 'exit' 可退出连续对话\n"
+                f"• 连续对话超时时间：{self.session_timeout}秒\n"
+                f"• 可通过配置文件修改超时时间\n"
                 "\n管理命令：\n"
                 "• /dzmm_personas - 列出所有可用角色\n"
                 "• /dzmm_persona [角色名] - 切换到指定角色\n"
