@@ -4,3 +4,17 @@ help: 输入 /dzmm [内容] 与AI聊天，支持上下文对话和自动密钥�
 version: v1.1.0
 author: VincenttHo
 repo: https://github.com/VincenttHo/astrbot_plugin_dzmm
+config：
+  - key: session_timeout
+    name: 会话超时时间
+    desc: 连续对话模式的超时时间（秒）
+    type: number
+    default: 300
+    min: 30
+    max: 3600
+      
+  - key: session_record_history
+    name: 记录历史消息
+    desc: 连续对话模式是否记录历史消息链
+    type: boolean
+    default: false
