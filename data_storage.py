@@ -168,6 +168,39 @@ class DataStorage:
         self.data["api_key_failures"] = {}
         # 立即异步保存到文件
         self._async_save()
+
+    def get_user_last_activity(self) -> Dict[str, float]:
+        """获取用户最后活动时间
+        
+        Returns:
+            用户最后活动时间字典
+        """
+        try:
+            if os.path.exists(self.user_last_activity_file):
+                with open(self.user_last_activity_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                
+                logging.info(f"DZMM插件: 已恢复用户活动时间数据")
+                return data
+        except Exception as e:
+            logging.error(f"DZMM插件: 读取用户活动时间数据失败: {str(e)}")
+        
+        # 如果读取失败或文件不存在，返回空字典
+        return {}
+    
+    def save_user_last_activity(self, user_last_activity: Dict[str, float]):
+        """保存用户最后活动时间
+        
+        Args:
+            user_last_activity: 用户最后活动时间字典
+        """
+        try:
+            with open(self.user_last_activity_file, 'w', encoding='utf-8') as f:
+                json.dump(user_last_activity, f, ensure_ascii=False, indent=2)
+            
+            logging.debug(f"DZMM插件: 用户活动时间数据已保存")
+        except Exception as e:
+            logging.error(f"DZMM插件: 保存用户活动时间数据失败: {str(e)}")
     
     def get_user_last_activity(self) -> Dict[str, str]:
         """获取用户最后活动时间"""
